@@ -1,0 +1,8 @@
+README.md
+setup.py
+KivySightGlass.egg-info/PKG-INFO
+KivySightGlass.egg-info/SOURCES.txt
+KivySightGlass.egg-info/dependency_links.txt
+KivySightGlass.egg-info/requires.txt
+KivySightGlass.egg-info/top_level.txt
+kivy_sight_glass/__init__.py
