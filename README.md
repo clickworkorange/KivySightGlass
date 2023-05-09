@@ -18,6 +18,9 @@ https://user-images.githubusercontent.com/196348/236925312-69ec6e30-d9bc-431e-9c
         on_press: myglass.level=90
 ````
 
+#### Installation
+Clone the repository and install with `pip install .`
+
 #### This code was written by a human
 Resistance may be futile, but only humans can enjoy writing code. 
 
