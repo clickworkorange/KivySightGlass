@@ -9,8 +9,6 @@ glass.
 """
 
 import os, random, operator
-#from math import sqrt, cos, sin, pi
-#from math import cos, sin, pi
 from functools import partial
 from kivy.properties import ColorProperty, BoundedNumericProperty
 from kivy.uix.boxlayout import BoxLayout
@@ -25,9 +23,14 @@ class SightGlass(BoxLayout, StencilView):
   glass_color = ColorProperty()
   glass_shade = ColorProperty()
   liquid_color = ColorProperty()
+  # TODO: the following three properties could be combined
+  # in a single property accepting an int, a list of two,
+  # or a list of three numbers (see AliasProperty)
+  scale_major = BoundedNumericProperty(0, min=0, max=100)
+  scale_minor = BoundedNumericProperty(0, min=0, max=10)
+  scale_ratio = BoundedNumericProperty(1.0, min=0.0, max=1.0)
   scale_color = ColorProperty()
   level = BoundedNumericProperty(0, min=0, max=100)
-  scale = BoundedNumericProperty(0, min=0, max=100) # TODO: rename this
 
   def __init__(self, **kwargs):
     super().__init__(**kwargs)
@@ -35,7 +38,7 @@ class SightGlass(BoxLayout, StencilView):
     self.liquid = Liquid()
     self.add_widget(self.liquid)
     self.gradients = []
-    self.graduation = InstructionGroup()
+    self.gradlines = InstructionGroup()
     self.initial = True # initial level should be set instantly
 
   def on_level(self, widget, level):
@@ -60,34 +63,55 @@ class SightGlass(BoxLayout, StencilView):
   def on_liquid_color(self, widget, color):
     self.liquid.color = self.liquid_color
 
-  def draw_scale(self, scale):
+  def draw_gradlines(self, scale_major):
+    self.gradlines.clear()
     # TODO: [x,y] offset, to place scale outside glass
-    self.graduation.clear()
-    if scale:
-      self.graduation.add(Color(rgba=self.scale_color))
-      step = int(self.height/scale)
-      for i in range(step, int(self.height), step):
-        a = 200
-        b = 220
+    offset = {"x": 0, "y": 0}
+    if scale_major:
+      self.gradlines.add(Color(rgba=self.scale_color))
+      major = self.height/scale_major
+      for i in range(1, scale_major + 1):
+        # scale_major+1 so that a final set of minor lines
+        # is drawn above the last major line 
         w = 1.2
-        x = self.x
-        y = self.y + i
-        z = 5
-        self.graduation.add(Line(joint="bevel", width=w, ellipse=(x, y, self.width, z, a, b)))
-      self.canvas.add(self.graduation)
+        x = self.x + offset["x"]
+        y = self.y + (major*i) - w + offset["y"]
+        z = 0
+        a = 200
+        b = 240
+        if i < scale_major:
+          self.gradlines.add(Line(joint="bevel", width=w, ellipse=(x, y, self.width, z, a, b)))
+        if self.scale_minor:
+          minor = major/self.scale_minor
+          for j in range(1, self.scale_minor):
+            y = self.y + (major*i) + (minor*j) - w + offset["y"] - major
+            a = 220
+            w = 1
+            self.gradlines.add(Line(joint="bevel", width=w, ellipse=(x, y, self.width, z, a, b)))
+      # Perhaps a bit crude to draw these on the parent canvas,
+      # and it means gradients do not apply to gradlines, 
+      # but it's the easiest way to allow offset beyond edges
+      self.parent.canvas.add(self.gradlines)
+
+  # TODO: this is not neat
+  def on_scale_major(self, widget, scale_major):
+    self.draw_gradlines(scale_major)
+  def on_scale_minor(self, widget, scale_minor):
+    self.draw_gradlines(self.scale_major)
+  def on_scale_color(self, widget, scale_color):
+    self.draw_gradlines(self.scale_major)
 
   def on_size(self, widget, size):
     self.initial = False
     for gradient in self.gradients:
       gradient.pos = self.pos
       gradient.size = self.size
-    self.draw_scale(self.scale)
+    self.draw_gradlines(self.scale_major)
     self.liquid.set_level(self.level, True)
 
 class Liquid(RelativeLayout): 
   level = BoundedNumericProperty(0, min=0, max=100)
-  color = ColorProperty((1,1,1,1))
-  # TODO: swing up/down around new level (animation transition?)
+  color = ColorProperty()
   # TODO: "curvature" (of tube; 0=flat, 1=diameter=width)
   # TODO: read and understand the contents of this blogpost:
   # https://blog.kivy.org/2014/01/kivy-image-manipulations-with-mesh-and-textures/
@@ -101,7 +125,7 @@ class Liquid(RelativeLayout):
   def __init__(self, **kwargs):
     super().__init__(**kwargs)
     self.waves = []
-    for i in range(0,4):
+    for i in range(0,8):
       phase = "-" if i % 2 else "+"
       wave = Wave(
         color    = self.color, #TODO: meh (set_color)
@@ -114,28 +138,28 @@ class Liquid(RelativeLayout):
       self.add_widget(wave)
 
   def oscillate(self, overshoot, dt=0):
-    for wave in self.waves:
-      # stir things up
-      wave.distance = wave.max_distance
-    if abs(overshoot) > 0:
+    if abs(overshoot) > 1:
       duration = 1 # TODO: use "pressure" (speed)
-      anim = Animation(y=self.y-overshoot, d=duration, t="in_out_sine") 
+      anim = Animation(y=self.y+overshoot, d=duration, t="in_out_sine") 
       overshoot = -(overshoot/1.5) # TODO: use "viscosity" (damping)
       anim.on_complete = partial(self.oscillate, overshoot)
       anim.start(self)
 
   def set_level(self, level, instant=False, dt=0):
     Animation.cancel_all(self)
-    ufo = 280 # TODO: where does this value come from? 
+    ufo = 288 # =window.height-self.height, but how?
     height = ((self.parent.height / 100) * level) - ufo
     if instant:
       # TODO: set the y pos directly if instant (no animation)
       anim = Animation(y=height, d=0) 
     else:
+      for wave in self.waves:
+        # stir things up
+        wave.distance = wave.max_distance
       delta = self.y - height
-      overshoot = -(delta/10) 
+      overshoot = delta/5 # TODO: use "viscosity" (damping)
       duration = max(abs(delta) / 100, 1) # TODO: use "pressure" (speed)
-      anim = Animation(y=height+overshoot, d=duration, t="in_out_sine") 
+      anim = Animation(y=height-(overshoot/2), d=duration, t="in_out_sine") 
       anim.on_complete = partial(self.oscillate, overshoot)
     anim.start(self)
 
@@ -144,7 +168,7 @@ class Liquid(RelativeLayout):
 
   def on_color(self, widget, color):
     for i,wave in enumerate(self.waves):
-      wave.color = self.color #[0:3] + [min((0.1 + i/10),1)]
+      wave.color = self.color[0:3] + [min((0.1 + i/10),0.5)]
 
 class Wave(Image): 
   def __init__(self, offset=0, phase="+", distance=200, speed=1, damping=20, **kwargs):
@@ -155,7 +179,7 @@ class Wave(Image):
     self.phase = operator.neg if phase == "-" else operator.pos
     self.distance = distance
     self.max_distance = distance
-    self.min_distance = 3
+    self.min_distance = 5
     self.speed = speed
     self.damping = damping
     self.size_hint = (None, None)
