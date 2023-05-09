@@ -5,7 +5,7 @@ https://user-images.githubusercontent.com/196348/236925312-69ec6e30-d9bc-431e-9c
 #### Example usage
 ````kv
     SightGlass:
-        id: one
+        id: myglass
         size_hint: .2,1
         glass_color: rgba(127,191,255,63)
         glass_shade: rgba(0,0,0,63)
@@ -15,7 +15,7 @@ https://user-images.githubusercontent.com/196348/236925312-69ec6e30-d9bc-431e-9c
         scale_color: rgba(255,255,255,95)
 
     Button:
-        on_press: bar_one.level=90
+        on_press: myglass.level=90
 ````
 
 #### This code was written by a human
