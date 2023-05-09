@@ -9,12 +9,15 @@ glass.
 """
 
 import os, random, operator
+#from math import sqrt, cos, sin, pi
+#from math import cos, sin, pi
+from functools import partial
 from kivy.properties import ColorProperty, BoundedNumericProperty
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.relativelayout import RelativeLayout 
 from kivy.uix.stencilview import StencilView
 from kivy.uix.image import Image
-from kivy.animation import Animation
+from kivy.animation import Animation, AnimationTransition
 from kivy.graphics import Rectangle, Line, Color, InstructionGroup
 from kivy_gradient import Gradient
 
@@ -40,7 +43,7 @@ class SightGlass(BoxLayout, StencilView):
 
   def on_glass_color(self, widget, color):
     with self.canvas.before:
-      # behind liquid
+      # beneath liquid
       Color(rgba=self.glass_color)
       self.gradients.append(Rectangle(pos=self.pos, size=self.size, texture=Gradient.horizontal((1,1,1,1), (0,0,0,1))))
     with self.canvas.after:
@@ -98,10 +101,10 @@ class Liquid(RelativeLayout):
   def __init__(self, **kwargs):
     super().__init__(**kwargs)
     self.waves = []
-    for i in range(0,8):
+    for i in range(0,4):
       phase = "-" if i % 2 else "+"
       wave = Wave(
-        color    = self.color, # self.color[0:3] + [1], #[0.2], #[min((0.2 + i/10),1)], #TODO: meh (set_color)
+        color    = self.color, #TODO: meh (set_color)
         distance = random.randrange(100,200), 
         offset   = random.randrange(-200,200), 
         phase    = phase, 
@@ -110,22 +113,38 @@ class Liquid(RelativeLayout):
       self.waves.append(wave)
       self.add_widget(wave)
 
-  def set_level(self, level, instant=False, dt=0):
-    ufo = 280 # TODO: why is this value needed? 
-    height = ((self.parent.height / 100) * level) - ufo
-    duration = 0 if instant else max(abs(self.y - height) / 100, 1)
-    anim = Animation(y=height, d=duration, t="in_out_sine")
-    anim.start(self)
+  def oscillate(self, overshoot, dt=0):
     for wave in self.waves:
       # stir things up
       wave.distance = wave.max_distance
+    if abs(overshoot) > 0:
+      duration = 1 # TODO: use "pressure" (speed)
+      anim = Animation(y=self.y-overshoot, d=duration, t="in_out_sine") 
+      overshoot = -(overshoot/1.5) # TODO: use "viscosity" (damping)
+      anim.on_complete = partial(self.oscillate, overshoot)
+      anim.start(self)
+
+  def set_level(self, level, instant=False, dt=0):
+    Animation.cancel_all(self)
+    ufo = 280 # TODO: where does this value come from? 
+    height = ((self.parent.height / 100) * level) - ufo
+    if instant:
+      # TODO: set the y pos directly if instant (no animation)
+      anim = Animation(y=height, d=0) 
+    else:
+      delta = self.y - height
+      overshoot = -(delta/10) 
+      duration = max(abs(delta) / 100, 1) # TODO: use "pressure" (speed)
+      anim = Animation(y=height+overshoot, d=duration, t="in_out_sine") 
+      anim.on_complete = partial(self.oscillate, overshoot)
+    anim.start(self)
 
   def on_level(self, widget, level):
     self.set_level(level)
 
   def on_color(self, widget, color):
-    for wave in self.waves:
-      wave.color = self.color
+    for i,wave in enumerate(self.waves):
+      wave.color = self.color #[0:3] + [min((0.1 + i/10),1)]
 
 class Wave(Image): 
   def __init__(self, offset=0, phase="+", distance=200, speed=1, damping=20, **kwargs):
