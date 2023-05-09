@@ -2,3 +2,7 @@
  
 https://user-images.githubusercontent.com/196348/236925312-69ec6e30-d9bc-431e-9c68-30a9c2b886dd.mp4
 
+#### This code was written by a human
+Resistance may be futile, but only humans can enjoy writing code. 
+
+<img src="/human_coder.png" alt="Bad Bot" width="128" height="128" />
