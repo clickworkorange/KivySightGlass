@@ -1,4 +1,4 @@
-This Kivy bar graph widget seeks to emulate the appearance of liquid inside a sight glass.
+This Kivy bar graph widget seeks to emulate the appearance of liquid inside a sight glass. It is currently at an experimental stage, to be considered early apha at best. 
 
 > A sight glass or water gauge is a type of level sensor, a transparent tube through which the operator of a tank or boiler can observe the level of liquid contained within. 
 
