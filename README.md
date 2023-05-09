@@ -4,8 +4,7 @@ This Kivy bar graph widget seeks to emulate the appearance of liquid inside a si
 
 https://en.wikipedia.org/wiki/Sight_glass
 
-<img width="195" height="256" src="https://github.com/clickworkorange/KivySightGlass/assets/196348/8141a7e9-9589-401f-8bbc-ff3a515ab7d2" />
-
+<img width="256" height="256" src="https://github.com/clickworkorange/KivySightGlass/assets/196348/ed7e3588-d459-4c0e-b272-cd42b7b79896" />
 
 #### Early preview video of a SightGlass in action
  
