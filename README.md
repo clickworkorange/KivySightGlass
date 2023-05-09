@@ -8,7 +8,7 @@ https://en.wikipedia.org/wiki/Sight_glass
 
 #### Early preview video of a SightGlass in action
 
-https://user-images.githubusercontent.com/196348/236925312-69ec6e30-d9bc-431e-9c68-30a9c2b886dd.mp4
+https://github.com/clickworkorange/KivySightGlass/assets/196348/2d69461b-6e3f-4ba8-ab48-24d1cc258f69
 
 #### Example usage
 ````kv
