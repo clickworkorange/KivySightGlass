@@ -24,6 +24,8 @@ Much of all this can be configured directly in `kvlang`, though at the moment a 
 
 ### Goals
 
+- Derive the `ufo` parameter that is used to represent the window height minus the height of the sight glass from the actual properties. This value is needed to accurately represent the `level` and is currently hard-coded, because Kivy is being weird about it. 
+
 - Make every aspect of the sight glass widget dynamic and configurable from `.kv`, ideally without cluttering the class with a ton of attributes. I am looking at <a href="https://kivy.org/doc/stable/api-kivy.properties.html#kivy.properties.AliasProperty">`AliasProperty`</a> as a possible way to achieve this. 
 
 - Maybe add a cylindrical mesh transformation to the waves, so they appear to follow the walls of the tube rather than move linearly from side to side. Keeping resource usage low is a more important goal though, and a 3D transformation might just prove too costly. 
