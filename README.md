@@ -12,19 +12,21 @@ https://github.com/clickworkorange/KivySightGlass/assets/196348/2d69461b-6e3f-4b
 
 #### Example usage
 ````kv
-    SightGlass:
-        id: myglass
-        size_hint: .2,1
-        level: 33
-        glass_color: rgba(127,191,255,63)
-        glass_shade: rgba(0,0,0,63)
-        liquid_color: rgba(0,215,255,255)
-        scale_major: 10
-        scale_minor: 5
-        scale_color: rgba(255,255,255,95)
+#:import SightGlass kivy_sight_glass.SightGlass
 
-    Button:
-        on_press: myglass.level=90
+SightGlass:
+    id: myglass
+    size_hint: .2,1
+    level: 33
+    glass_color: rgba(127,191,255,63)
+    glass_shade: rgba(0,0,0,63)
+    liquid_color: rgba(0,215,255,255)
+    scale_major: 10
+    scale_minor: 5
+    scale_color: rgba(255,255,255,95)
+
+Button:
+    on_press: myglass.level=90
 ````
 
 #### Installation
