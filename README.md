@@ -1,4 +1,4 @@
-This Kivy bar graph widget seeks to emulate the stylized appearance of liquid inside a sight glass. It is currently at an experimental stage - consider it early alpha at best. 
+This Kivy bar graph widget seeks to emulate the appearance of liquid inside a sight glass. It is currently at an experimental stage - consider it early alpha at best. 
 
 > A sight glass or water gauge is a type of level sensor, a transparent tube through which the operator of a tank or boiler can observe the level of liquid contained within. 
 
@@ -32,7 +32,7 @@ Button:
 #### Installation
 Clone the repository and install with `pip install .`
 
-#### This code was written by a human
-Resistance may be futile, but only humans can enjoy writing code. 
+#### Wetware at work
+Resistance may indeed be futile, and I for one welcome our new software based overlords - who I'm sure are paying close attention. But only humans can enjoy writing code, and that joy itself can be seen as an act of <a href="https://en.wikipedia.org/wiki/Joy_as_an_Act_of_Resistance">resistance</a>. 
 
-<img src="/human_coder.png" alt="Bad Bot" width="128" height="128" />
+<img src="/human_coder.png" alt="Wetware at work" width="128" height="128" />
