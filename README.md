@@ -30,6 +30,8 @@ Much of all this can be configured directly in `kvlang`, though at the moment a 
 
 - The ability to give a rounded appearance to the ends of the tube might be nice, perhaps by using a bitmap as the mask instead of (or in addition to) the `StencilView`. Or it may be possible to use `Canvas` drawing tools (i.e. `Line` and `Ellipse`) to draw a <a href="https://kivy.org/doc/stable/api-kivy.graphics.stencil_instructions.html">`Stencil`</a> that has an adjustable top & bottom curvature. 
 
+- Drawing the portion of the scale that is on the back of the tube (if any) *behind* the liquid (and the rear gradient). 
+
 - Attaching a list of strings to the "major" scale lines, so numbers (or any other characters) can be shown alongside. 
 
 ### Example usage
