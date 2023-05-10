@@ -18,7 +18,7 @@ This could probably have been better realised using a shader/mesh approach, but 
 
 The "tube" portion consists of horizontal front and rear gradients, with the "liquid" appearing in between. A third vertical shading gradient is added on top to add to the illusion of an actual tube. The whole widget is contained inside a <a href="https://kivy.org/doc/stable/api-kivy.uix.stencilview.html">`StencilView`</a>, which creates the outline of the tube by masking the image layers outside it. The maximum level visible inside the tube is 100, and the minimum 0, though -10 to 110 is allowed (for completely full/empty appearance, without any visible sloshing). 
 
-An optional scale can be added, which is currently drawn on the parent widget's <a href="https://kivy.org/doc/stable/api-kivy.graphics.instructions.html">`canvas`</a> (to allow ofsetting it beyond the edges of the `StencilView`). This can be divided into a maximum of 100 "major" lines, each further divided by a maximum of 10 "minor" lines. The graduation lines are actually ellipses, or partial ellipses, and can be given a curvature and up to 360#&deg; length. 
+An optional scale can be added, which is currently drawn on the parent widget's <a href="https://kivy.org/doc/stable/api-kivy.graphics.instructions.html">`canvas`</a> (to allow ofsetting it beyond the edges of the `StencilView`). This can be divided into a maximum of 100 "major" lines, each further divided by a maximum of 10 "minor" lines. The graduation lines are actually ellipses, or partial ellipses, and can be given a curvature and up to 360&deg; length. 
 
 Much of all this can be configured directly in `kvlang`, though at the moment a lot of things remain hard-coded. 
 
