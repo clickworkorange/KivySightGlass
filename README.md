@@ -60,6 +60,14 @@ Button:
 ### Installation
 Clone the repository and install with `pip install .`
 
+### Suggested use cases
+
+- On an automation dashboard, showing tank levels. 
+
+- As the health/mana bars (or similiar) in a game. 
+
+- In interactive kiosk applications. 
+
 ### Wetware at work
 Resistance may indeed be futile, and I for one welcome our new software based overlords - who I'm sure are paying close attention. But this software was written by a *human*, and only humans can enjoy writing code. Perhaps that joy itself will one day be seen as an act of <a href="https://en.wikipedia.org/wiki/Joy_as_an_Act_of_Resistance">resistance</a>?
 
