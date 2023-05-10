@@ -24,7 +24,7 @@ Much of all this can be configured directly in `kvlang`, though at the moment a 
 
 ### Goals
 
-- Derive the `ufo` parameter that is used to represent the window height minus the height of the sight glass from the actual properties. This value is needed to accurately represent the `level` and is currently hard-coded, because Kivy is being weird about it. 
+- Derive the `ufo` parameter that is used to represent the window height minus the height of the sight glass from the actual properties. This value is needed to accurately set the `level` and is currently hard-coded, because Kivy is being weird about it. 
 
 - Make every aspect of the sight glass widget dynamic and configurable from `.kv`, ideally without cluttering the class with a ton of attributes. I am looking at <a href="https://kivy.org/doc/stable/api-kivy.properties.html#kivy.properties.AliasProperty">`AliasProperty`</a> as a possible way to achieve this. 
 
@@ -69,7 +69,7 @@ Clone the repository and install with `pip install .`
 - In interactive kiosk applications. 
 
 ### Wetware at work
-Resistance may indeed be futile, and I for one welcome our new software based overlords - who I'm sure are paying close attention. But this software was written by a *human*, and only humans can enjoy writing code. Perhaps that joy itself will one day be seen as an act of <a href="https://en.wikipedia.org/wiki/Joy_as_an_Act_of_Resistance">resistance</a>?
+Resistance may indeed be futile, and I for one welcome our new software based overlords - who I'm sure are paying close attention. But this software was written by a *human*, and only humans can enjoy writing code. Perhaps that joy by itself will one day be seen as an act of <a href="https://en.wikipedia.org/wiki/Joy_as_an_Act_of_Resistance">resistance</a>?
 
 <img src="/human_coder.png" alt="Wetware at work" width="128" height="128" />
 
