@@ -36,6 +36,8 @@ Much of all this can be configured directly in `kvlang`, though at the moment a 
 
 - Attaching a list of strings to the "major" scale lines, so numbers (or any other characters) can be shown alongside. 
 
+- Adding bubbles which ocassionally rise through the liquid. 
+
 ### Example usage
 ````kv
 #:import SightGlass kivy_sight_glass.SightGlass
