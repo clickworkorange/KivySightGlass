@@ -8,7 +8,9 @@ type widget that emulates the appearance of liquid inside a sight
 glass.
 """
 
-import os, random, operator
+import os
+import random
+import operator
 from functools import partial
 from kivy.properties import ColorProperty, BoundedNumericProperty
 from kivy.uix.boxlayout import BoxLayout
@@ -57,18 +59,24 @@ class SightGlass(BoxLayout, StencilView):
         with self.canvas.before:
             # beneath liquid
             Color(rgba=self.glass_color)
-            self.gradients.append(Rectangle(pos=self.pos, size=self.size, texture=gradient))
+            self.gradients.append(
+                Rectangle(pos=self.pos, size=self.size, texture=gradient)
+            )
         with self.canvas.after:
             # above liquid
             Color(rgba=self.glass_color)
-            self.gradients.append(Rectangle(pos=self.pos, size=self.size, texture=gradient))
+            self.gradients.append(
+                Rectangle(pos=self.pos, size=self.size, texture=gradient)
+            )
 
     def on_glass_shade(self, widget, color):
         gradient = Gradient.vertical((1, 1, 1, 1), (0, 0, 0, 1))
         with self.canvas.after:
             # shading
             Color(rgba=self.glass_shade)
-            self.gradients.append(Rectangle(pos=self.pos, size=self.size, texture=gradient))
+            self.gradients.append(
+                Rectangle(pos=self.pos, size=self.size, texture=gradient)
+            )
 
     def on_liquid_color(self, widget, color):
         self.liquid.color = self.liquid_color
@@ -90,14 +98,18 @@ class SightGlass(BoxLayout, StencilView):
                 a = 200
                 b = 240
                 if i < scale_major:
-                    self.gradlines.add(Line(joint="bevel", width=w, ellipse=(x, y, self.width, z, a, b)))
+                    self.gradlines.add(
+                        Line(joint="bevel", width=w, ellipse=(x, y, self.width, z, a, b))
+                    )
                 if self.scale_minor:
                     minor = major / self.scale_minor
                     a = a + (b - a) * self.scale_ratio
                     w = 1
                     for j in range(1, self.scale_minor):
                         y = self.y + (major * i) + (minor * j) - w + offset["y"] - major
-                        self.gradlines.add(Line(joint="bevel", width=w, ellipse=(x, y, self.width, z, a, b)))
+                        self.gradlines.add(
+                            Line(joint="bevel", width=w, ellipse=(x, y, self.width, z, a, b))
+                        )
             # Perhaps a bit crude to draw these on the parent canvas,
             # and it means gradients do not apply to gradlines,
             # but it's the easiest way to allow offset beyond edges
@@ -142,11 +154,11 @@ class Liquid(RelativeLayout):
         for i in range(0, 8):
             phase = "-" if i % 2 else "+"
             wave = Wave(
-                color = self.color,
-                distance = random.randrange(100, 200),
-                offset = random.randrange(-200, 200),
-                phase = phase,
-                speed = (random.randrange(80, 120) / 100)
+                color=self.color,
+                distance=random.randrange(100, 200),
+                offset=random.randrange(-200, 200),
+                phase=phase,
+                speed=(random.randrange(80, 120) / 100)
             )
             self.waves.append(wave)
             self.add_widget(wave)
