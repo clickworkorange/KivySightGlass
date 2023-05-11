@@ -28,9 +28,9 @@ class SightGlass(BoxLayout, StencilView):
   # or a list of three numbers (see AliasProperty)
   scale_major = BoundedNumericProperty(0, min=0, max=100)
   scale_minor = BoundedNumericProperty(0, min=0, max=10)
-  scale_ratio = BoundedNumericProperty(1.0, min=0.0, max=1.0)
+  scale_ratio = BoundedNumericProperty(0.5, min=0.0, max=1.0)
   scale_color = ColorProperty()
-  level = BoundedNumericProperty(0, min=0, max=100)
+  level = BoundedNumericProperty(0, min=-10, max=110)
 
   def __init__(self, **kwargs):
     super().__init__(**kwargs)
@@ -43,6 +43,12 @@ class SightGlass(BoxLayout, StencilView):
 
   def on_level(self, widget, level):
     self.liquid.set_level(self.level, self.initial)
+
+  def get_min_level(self):
+    return self.property("level").get_min(self)
+
+  def get_max_level(self):
+    return self.property("level").get_max(self)
 
   def on_glass_color(self, widget, color):
     with self.canvas.before:
@@ -83,10 +89,10 @@ class SightGlass(BoxLayout, StencilView):
           self.gradlines.add(Line(joint="bevel", width=w, ellipse=(x, y, self.width, z, a, b)))
         if self.scale_minor:
           minor = major/self.scale_minor
+          a = a + (b - a) * self.scale_ratio # 220
+          w = 1
           for j in range(1, self.scale_minor):
             y = self.y + (major*i) + (minor*j) - w + offset["y"] - major
-            a = 220
-            w = 1
             self.gradlines.add(Line(joint="bevel", width=w, ellipse=(x, y, self.width, z, a, b)))
       # Perhaps a bit crude to draw these on the parent canvas,
       # and it means gradients do not apply to gradlines, 
@@ -139,7 +145,7 @@ class Liquid(RelativeLayout):
 
   def oscillate(self, overshoot, dt=0):
     if abs(overshoot) > 1:
-      duration = 1 # TODO: use "pressure" (speed)
+      duration = max(abs(overshoot) / 100, 1) # TODO: use "pressure" (speed)
       anim = Animation(y=self.y+overshoot, d=duration, t="in_out_sine") 
       overshoot = -(overshoot/1.5) # TODO: use "viscosity" (damping)
       anim.on_complete = partial(self.oscillate, overshoot)
@@ -147,7 +153,7 @@ class Liquid(RelativeLayout):
 
   def set_level(self, level, instant=False, dt=0):
     Animation.cancel_all(self)
-    ufo = 288 # =window.height-self.height, but how?
+    ufo = 428 # =window.height-self.height, but how?
     height = ((self.parent.height / 100) * level) - ufo
     if instant:
       # TODO: set the y pos directly if instant (no animation)
@@ -168,7 +174,11 @@ class Liquid(RelativeLayout):
 
   def on_color(self, widget, color):
     for i,wave in enumerate(self.waves):
-      wave.color = self.color[0:3] + [min((0.1 + i/10),0.5)]
+      f = random.randrange(-100,100)/200.0
+      r = min(self.color[0] + f,1)
+      g = min(self.color[1] + f,1)
+      b = min(self.color[2] + f,1)
+      wave.color = [r,g,b] + [min((0.1 + i/10),0.5)]
 
 class Wave(Image): 
   def __init__(self, offset=0, phase="+", distance=200, speed=1, damping=20, **kwargs):
@@ -179,7 +189,7 @@ class Wave(Image):
     self.phase = operator.neg if phase == "-" else operator.pos
     self.distance = distance
     self.max_distance = distance
-    self.min_distance = 5
+    self.min_distance = 10
     self.speed = speed
     self.damping = damping
     self.size_hint = (None, None)
