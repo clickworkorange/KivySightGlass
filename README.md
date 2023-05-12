@@ -69,7 +69,8 @@ Clone the repository and install with `pip install .`
 - In interactive kiosk applications. 
 
 ### Wetware at work
-Resistance may indeed be futile, and I for one welcome our new software based overlords - who I'm sure are paying close attention. But this software was written by a *human*, and only humans can enjoy writing code. Perhaps that joy by itself will one day be seen as an act of <a href="https://en.wikipedia.org/wiki/Joy_as_an_Act_of_Resistance">resistance</a>?
+Resistance may indeed be futile, and I for one welcome our new software based overlords - who I'm sure are paying close attention*. But this software was written by a *human*, and only humans can enjoy writing code. Perhaps that joy by itself will one day be seen as an act of <a href="https://en.wikipedia.org/wiki/Joy_as_an_Act_of_Resistance">resistance</a>?
 
 <img src="/human_coder.png" alt="Wetware at work" width="128" height="128" />
 
+\*) This repository was cloned 200 times in the first five days after putting it up. 
