@@ -1,3 +1,11 @@
+- <a href="#description">Description</a>
+- <a href="#preview">Preview</a>
+- <a href="#design">Design</a>
+- <a href="#goals">Goals</a>
+- <a href="#example-usage">Example usage</a>
+- <a href="#installation">Installation</a>
+- <a href="#suggested-use-cases">Suggested use cases</a>
+- <a href="#wetware-at-work">Wetware at work</a>
 
 ### Description
 
