@@ -9,6 +9,9 @@ setup(
     version='0.0.1',
     packages=['kivy_sight_glass'],
     include_package_data=True,
+    package_data={
+        "images": ["images/*.png"],
+    },
     url='https://github.com/clickworkorange/KivySightGlass',
     license='MIT',
     author='clickworkorange',
