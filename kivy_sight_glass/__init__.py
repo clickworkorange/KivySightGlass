@@ -113,6 +113,9 @@ class SightGlass(BoxLayout, StencilView):
             # Perhaps a bit crude to draw these on the parent canvas,
             # and it means gradients do not apply to gradlines,
             # but it's the easiest way to allow offset beyond edges
+            # TODO: Doesn't this create multiple copies of the lines
+            # every time they're changed? The icons in wardrobe.py
+            # seem to do this...
             self.parent.canvas.add(self.gradlines)
 
     # TODO: this is not neat
@@ -209,7 +212,7 @@ class Liquid(RelativeLayout):
 class Wave(Image):
     def __init__(self, offset=0, phase="+", distance=200, speed=1, damping=20, **kwargs):
         super().__init__(**kwargs)
-        self.source = os.path.join(os.path.dirname(__file__), "wave.png")
+        self.source = os.path.join(os.path.dirname(__file__), "images/wave.png")
         self.size = self.texture.size
         # TODO: offset_x?
         self.offset = -(self.width / 2) + offset
