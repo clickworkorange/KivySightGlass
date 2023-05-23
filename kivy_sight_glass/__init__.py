@@ -12,25 +12,23 @@ import os
 import random
 import operator
 from functools import partial
-from kivy.properties import ColorProperty, BoundedNumericProperty
-from kivy.uix.boxlayout import BoxLayout
+from kivy.properties import ColorProperty, BoundedNumericProperty, ObjectProperty
+from kivy.uix.widget import Widget
 from kivy.uix.relativelayout import RelativeLayout
+from kivy.uix.anchorlayout import AnchorLayout
 from kivy.uix.stencilview import StencilView
 from kivy.uix.image import Image
 from kivy.animation import Animation
-from kivy.graphics import Rectangle, Line, Color, InstructionGroup
+from kivy.graphics import Rectangle, Line, Color
 from kivy_gradient import Gradient
 
 
-class SightGlass(BoxLayout, StencilView):
+class SightGlass(AnchorLayout, StencilView):
     glass_color = ColorProperty()
     glass_shade = ColorProperty()
     liquid_color = ColorProperty()
-    # TODO: the following three properties could be combined
-    # in a single property accepting an int, a list of two,
-    # or a list of three numbers (see AliasProperty)
-    scale_major = BoundedNumericProperty(0, min=0, max=100)
-    scale_minor = BoundedNumericProperty(0, min=0, max=10)
+    scale_major = ObjectProperty(None)
+    scale_minor = ObjectProperty(None)
     scale_ratio = BoundedNumericProperty(0.5, min=0.0, max=1.0)
     scale_color = ColorProperty()
     level = BoundedNumericProperty(0, min=-10, max=110)
@@ -40,8 +38,9 @@ class SightGlass(BoxLayout, StencilView):
         self.size_hint = (1, 1)
         self.liquid = Liquid()
         self.add_widget(self.liquid)
+        self.gradlines = Gradlines()
+        self.add_widget(self.gradlines)
         self.gradients = []
-        self.gradlines = InstructionGroup()
         # initial level should be set instantly
         self.initial = True
 
@@ -81,60 +80,65 @@ class SightGlass(BoxLayout, StencilView):
     def on_liquid_color(self, widget, color):
         self.liquid.color = self.liquid_color
 
-    def draw_gradlines(self, scale_major):
-        self.gradlines.clear()
-        # TODO: [x, y] offset, to place scale outside glass
-        offset = {"x": 0, "y": 0}
-        if scale_major:
-            self.gradlines.add(Color(rgba=self.scale_color))
-            major = self.height / scale_major
-            for i in range(1, scale_major + 1):
-                # scale_major+1 so that a final set of minor lines
-                # is drawn above the last major line
-                w = 1.2
-                x = self.x + offset["x"]
-                y = self.y + (major * i) - w + offset["y"]
-                z = 0
-                a = 200
-                b = 240
-                if i < scale_major:
-                    self.gradlines.add(
-                        Line(joint="bevel", width=w, ellipse=(x, y, self.width, z, a, b))
-                    )
-                if self.scale_minor:
-                    minor = major / self.scale_minor
-                    a = a + (b - a) * self.scale_ratio
-                    w = 1
-                    for j in range(1, self.scale_minor):
-                        y = self.y + (major * i) + (minor * j) - w + offset["y"] - major
-                        self.gradlines.add(
-                            Line(joint="bevel", width=w, ellipse=(x, y, self.width, z, a, b))
-                        )
-            # Perhaps a bit crude to draw these on the parent canvas,
-            # and it means gradients do not apply to gradlines,
-            # but it's the easiest way to allow offset beyond edges
-            # TODO: Doesn't this create multiple copies of the lines
-            # every time they're changed? The icons in wardrobe.py
-            # seem to do this...
-            self.parent.canvas.add(self.gradlines)
-
-    # TODO: this is not neat
-    def on_scale_major(self, widget, scale_major):
-        self.draw_gradlines(scale_major)
-
-    def on_scale_minor(self, widget, scale_minor):
-        self.draw_gradlines(self.scale_major)
-
-    def on_scale_color(self, widget, scale_color):
-        self.draw_gradlines(self.scale_major)
-
     def on_size(self, widget, size):
         self.initial = False
         for gradient in self.gradients:
             gradient.pos = self.pos
             gradient.size = self.size
-        self.draw_gradlines(self.scale_major)
+        # self.gradlines.draw(self.scale_major)
         self.liquid.set_level(self.level, True)
+
+
+class Gradlines(Widget):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+    def on_parent(self, widget, parent):
+        self.parent.bind(scale_major=self.draw)
+        self.parent.bind(scale_minor=self.draw)
+
+    def draw(self, parent, scale):
+        # TODO: best way to propagate properties parent > child?
+        scale_major = self.parent.scale_major
+        scale_minor = self.parent.scale_minor
+        self.canvas.clear()
+        # [x, y] offset, to place scale outside glass
+        offset = {"x": 0, "y": 0}
+        w = 2
+        z = 5
+        a = 270
+        b = 90
+        if isinstance(scale_major, int):
+            self.canvas.add(Color(rgba=self.parent.scale_color))
+            major = self.height / scale_major
+            for i in range(1, scale_major + 1):
+                # scale_major+1 so that a final set of minor lines
+                # is drawn above the last major line
+                x = self.x + offset["x"]
+                y = self.y + (major * i) - w + offset["y"]
+                if i < scale_major:
+                    self.canvas.add(
+                        Line(joint="bevel", width=w, ellipse=(x, y, self.width, z, a, b))
+                    )
+                if scale_minor:
+                    minor = major / scale_minor
+                    a = a + (b - a) * self.parent.scale_ratio
+                    w = 1
+                    for j in range(1, scale_minor):
+                        y = self.y + (major * i) + (minor * j) - w + offset["y"] - major
+                        self.canvas.add(
+                            Line(joint="bevel", width=w, ellipse=(x, y, self.width, z, a, b))
+                        )
+        elif isinstance(scale_major, list):
+            self.canvas.add(Color(rgba=self.parent.scale_color))
+            major = self.height / 100
+            for i in scale_major:
+                x = self.x + offset["x"]
+                y = self.y + (major * i) - w + offset["y"]
+                if i < 100:
+                    self.canvas.add(
+                        Line(joint="bevel", width=w, ellipse=(x, y, self.width, z, a, b))
+                    )
 
 
 class Liquid(RelativeLayout):
@@ -154,7 +158,7 @@ class Liquid(RelativeLayout):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.waves = []
-        for i in range(0, 8):
+        for i in range(0, 3):
             phase = "-" if i % 2 else "+"
             wave = Wave(
                 color=self.color,
@@ -179,7 +183,7 @@ class Liquid(RelativeLayout):
     def set_level(self, level, instant=False, dt=0):
         Animation.cancel_all(self)
         # ufo=window.height-self.height, but how?
-        ufo = 428
+        ufo = 528
         height = ((self.parent.height / 100) * level) - ufo
         if instant:
             # TODO: set the y pos directly if instant (no animation)
